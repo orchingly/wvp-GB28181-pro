@@ -23,6 +23,7 @@ import com.genersoft.iot.vmp.media.zlm.dto.StreamAuthorityInfo;
 import com.genersoft.iot.vmp.media.zlm.dto.StreamProxyItem;
 import com.genersoft.iot.vmp.media.zlm.dto.hook.*;
 import com.genersoft.iot.vmp.service.*;
+import com.genersoft.iot.vmp.service.bean.InviteErrorCode;
 import com.genersoft.iot.vmp.service.bean.MessageForPushChannel;
 import com.genersoft.iot.vmp.service.bean.SSRCInfo;
 import com.genersoft.iot.vmp.storager.IRedisCatchStorage;
@@ -621,12 +622,16 @@ public class ZLMHttpHookListener {
                     storager.stopPlay(deviceId, channelId);
                 });
 
-                resultHolder.put(key, uuid, result);
+                //resultHolder.put(key, uuid, result);
 
                 if (!exist) {
                     playService.play(mediaInfo, deviceId, channelId, null, (code, message, data) -> {
                         msg.setData(new HookResult(code, message));
                         resultHolder.invokeResult(msg);
+                        //点播成功才保存结果,否则导致无法点播
+                        if (code == InviteErrorCode.SUCCESS.getCode()) {
+                            resultHolder.put(key, uuid, result);
+                        }
                     });
                 }
                 return result;
