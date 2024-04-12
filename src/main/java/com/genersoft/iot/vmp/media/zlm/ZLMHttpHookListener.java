@@ -22,7 +22,9 @@ import com.genersoft.iot.vmp.media.zlm.dto.MediaServerItem;
 import com.genersoft.iot.vmp.media.zlm.dto.StreamAuthorityInfo;
 import com.genersoft.iot.vmp.media.zlm.dto.StreamProxyItem;
 import com.genersoft.iot.vmp.media.zlm.dto.hook.*;
+import com.genersoft.iot.vmp.opencv.frame.detect.ActionDetectService;
 import com.genersoft.iot.vmp.service.*;
+import com.genersoft.iot.vmp.service.bean.InviteErrorCode;
 import com.genersoft.iot.vmp.service.bean.MessageForPushChannel;
 import com.genersoft.iot.vmp.service.bean.SSRCInfo;
 import com.genersoft.iot.vmp.storager.IRedisCatchStorage;
@@ -125,6 +127,9 @@ public class ZLMHttpHookListener {
 
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
+
+    @Autowired
+    private ActionDetectService yoloDetectionService;
 
     /**
      * 服务器定时上报时间，上报间隔可配置，默认10s上报一次
@@ -365,6 +370,16 @@ public class ZLMHttpHookListener {
             } else {
                 redisCatchStorage.removeStreamAuthorityInfo(param.getApp(), param.getStream());
             }
+
+            if (param.isRegist() && "rtsp".equals(param.getSchema())) {
+                String streamUrl = String.format("rtsp://127.0.0.1:%s/%s/%s", mediaInfo.getRtspPort(), "rtp", param.getStream());
+                logger.info("streamUrl : " + streamUrl);
+                yoloDetectionService.startPersonDetect(streamUrl, param.getApp(), param.getStream());
+            }
+            else if ("rtsp".equals(param.getSchema())){
+                yoloDetectionService.stopDetect(param.getStream());
+            }
+
 
             if ("rtsp".equals(param.getSchema())) {
                 // 更新流媒体负载信息
@@ -622,11 +637,17 @@ public class ZLMHttpHookListener {
                 });
 
                 resultHolder.put(key, uuid, result);
-
+                logger.info("当前流是否点播过: exist {}", exist);
                 if (!exist) {
                     playService.play(mediaInfo, deviceId, channelId, null, (code, message, data) -> {
                         msg.setData(new HookResult(code, message));
                         resultHolder.invokeResult(msg);
+                        logger.info("点播结果回调 code {}, message {}", code, message);
+                        if (code == InviteErrorCode.SUCCESS.getCode()) {
+                            logger.info("code {}, message {}", code, message);
+                            //查询成功再保存
+//                            resultHolder.put(key, uuid, result);
+                        }
                     });
                 }
                 return result;

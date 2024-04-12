@@ -82,6 +82,7 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
                 ":" + inviteInfoForUpdate.getChannelId() +
                 ":" + inviteInfoForUpdate.getStream()+
                 ":" + inviteInfoForUpdate.getSsrcInfo().getSsrc();
+        logger.info("updateInviteInfo: key= " + key +", redis: " + redisTemplate);
         redisTemplate.opsForValue().set(key, inviteInfoForUpdate);
     }
 
@@ -115,8 +116,10 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
                 ":" + (channelId != null ? channelId : "*") +
                 ":" + (stream != null ? stream : "*")
                 + ":*";
+        logger.info("getInviteInfo: key = " + key +", redis: " + redisTemplate);
         List<Object> scanResult = RedisUtil.scan(redisTemplate, key);
         if (scanResult.size() != 1) {
+            logger.info("getInviteInfo: null");
             return null;
         }
 
@@ -149,6 +152,7 @@ public class InviteStreamServiceImpl implements IInviteStreamService {
                 if (inviteInfo == null) {
                     continue;
                 }
+//                logger.warn("removeInviteInfo: key= ", new Throwable("DEBUG"));
                 redisTemplate.delete(key);
                 inviteErrorCallbackMap.remove(buildKey(type, deviceId, channelId, inviteInfo.getStream()));
             }

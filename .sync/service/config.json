@@ -1,0 +1,1 @@
+{"remotePort":"65522","remoteHost":"106.92.102.170","remoteUser":"lany","remoteBuildCommand":"mvn compile","remoteRootDir":"~/data/github","launchActivity":"com.hi.dhl.test/com.hi.dhl.test.HomeActivity","sdkDir":"编译会自动识别路径，如果失败，请主动设置SDK路径","ndkDir":"编译会自动识别路径，如果失败，请主动设置NDK路径","remoteUserPassword":"如果配置了无密码访问，这里可以为空","useGradlew":2,"selectCompileResult":0}

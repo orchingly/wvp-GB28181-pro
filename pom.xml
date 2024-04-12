@@ -18,10 +18,9 @@
 
 	<repositories>
 		<repository>
-			<id>nexus-aliyun</id>
-			<name>Nexus aliyun</name>
-			<url>https://maven.aliyun.com/repository/public</url>
-			<layout>default</layout>
+			<id>central-repos1</id>
+			<name>Central Repository 2</name>
+			<url>https://repo1.maven.org/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -32,9 +31,12 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>nexus-aliyun</id>
-			<name>Nexus aliyun</name>
-			<url>https://maven.aliyun.com/repository/public</url>
+<!--			<id>nexus-aliyun</id>-->
+<!--			<name>Nexus aliyun</name>-->
+<!--			<url>https://maven.aliyun.com/repository/public</url>-->
+			<id>central-repos1</id>
+			<name>Central Repository 2</name>
+			<url>https://repo1.maven.org/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -308,6 +310,22 @@
 <!--			<scope>test</scope>-->
 		</dependency>
 
+		<!--javacv-->
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv-platform</artifactId>
+			<version>1.5.9</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/opencv-platform-gpu -->
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>opencv-platform-gpu</artifactId>
+			<version>4.7.0-1.5.9</version>
+		</dependency>
+
+
+
 	</dependencies>
 
 
@@ -356,6 +374,9 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+<!--				<includes>-->
+<!--					<include>**/*</include>-->
+<!--				</includes>-->
 			</resource>
 			<resource>
 				<directory>src/main/java</directory>
